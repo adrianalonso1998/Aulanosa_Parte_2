@@ -1,14 +1,15 @@
 <?php
 include_once "../carpetaModelo/Alumno.php";
 include_once "../CarpetaDatos/UsuarioDAO.php";
-$usuDAO=new UsuarioDAO();
-$fecha=new DateTime('1921-11-11');
-$alumno1=new Alumno(1,"prueba3","prueba4",$fecha);
-$usu=$usuDAO->obtenerUsuario("admin","1234");
-$alumDAO = new AlumnoDAO();
-$alu=$alumDAO->obtenerAlumno($usu);
-$alumDAO->guardarAlumno($alumno1);
-var_dump($alu);
+//$usuDAO = new UsuarioDAO();
+// $fecha = new DateTime('2001-08-17');
+// $alumno1 = new Alumno(14, "Vanessa", "Señé", $fecha);
+// $usu = $usuDAO->obtenerUsuario("admin", "1234");
+// $alumDAO = new AlumnoDAO();
+// $alu = $alumDAO->obtenerAlumno($usu);
+// //$alumDAO->guardarAlumno($alumno1);
+// $alumDAO->eliminarAlumno($alumno1);
+// var_dump($alu);
 // $alumDAO->guardarAlumno($usu);
 // $alumDAO->eliminarAlumno($usu);
 class AlumnoDAO
@@ -37,40 +38,48 @@ class AlumnoDAO
         $resultado = $consultaPreparada->get_result();
         $filas = $resultado->fetch_array();
         $con1->close();
-        $alumno=new Alumno($filas[0],$filas[1],$filas[2],$filas[3]);
+        $alumno = new Alumno($filas[0], $filas[1], $filas[2], $filas[3]);
         return $alumno;
     }
-    function guardarAlumno($Alumno)//terminar practicamente todo->aqui
+    function guardarAlumno($Alumno)
     {
-        $id=$Alumno->getId();
-        if($id===0){
-        $login=$Alumno->getLogin();
-        $password=$Alumno->getPassword();
-        $alumno_id=$Alumno->getAlumno_id();//:D
-        $con = $this->crearConexion();   
-        $sql1 = "INSERT INTO usuario (login, password, alumno_id) Values (?,?,?)";
-        $consultaPreparada = $con->prepare($sql1);
-        $consultaPreparada->bind_param("ssi", $login, $password,$alumno_id);
-        $consultaPreparada->execute();
-        $id=$con->insert_id;
-        $Alumno->setId($id);
-        var_dump($id);
-        $con->close();
-    }
-    else{
-        $id=$Alumno->getId();
-        $login=$Alumno->getLogin();
-        $password=$Alumno->getPassword();
-        $alumno_id=$Alumno->getAlumno_id();//:D
-        $con = $this->crearConexion();   
-        $sql1 = "UPDATE usuario set login=?, password=? WHERE id=?";
-        $consultaPreparada = $con->prepare($sql1);
-        $consultaPreparada->bind_param("ssi", $login, $password,$id);
-        $consultaPreparada->execute();
-        $con->close();
-    }
+        $id = $Alumno->getId();
+        if ($id === 0) {
+            $nombre = $Alumno->getNombre();
+            $apellidos = $Alumno->getApellidos(); //:D
+            $fecha_nacimiento = $Alumno->getFecha_nacimiento();
+            $fTexto=$fecha_nacimiento->format('Y-m-d');//pasamos el tipo date a string con el formato
+            $con = $this->crearConexion();
+            $sql1 = "INSERT INTO alumno (nombre, apellidos, fecha_nacimiento) Values (?,?,?)";
+            $consultaPreparada = $con->prepare($sql1);
+            $consultaPreparada->bind_param("sss", $nombre, $apellidos, $fTexto );
+            $consultaPreparada->execute();
+            $id = $con->insert_id;
+            $Alumno->setId($id);
+            var_dump($id);
+            $con->close();
+        } else {
+            $id = $Alumno->getId();
+            $nombre = $Alumno->getNombre();
+            $apellidos = $Alumno->getApellidos();
+            $fecha_nacimiento = $Alumno->getFecha_nacimiento(); //:D
+            $fTexto=$fecha_nacimiento->format('Y-m-d');//pasamos el tipo date a string con el formato
+            $con = $this->crearConexion();
+            $sql1 = "UPDATE alumno set nombre=?, apellidos=?, fecha_nacimiento=? WHERE id=?";
+            $consultaPreparada = $con->prepare($sql1);
+            $consultaPreparada->bind_param("sssi", $nombre, $apellidos, $fTexto, $id);
+            $consultaPreparada->execute();
+            $con->close();
+        }
     }
     function eliminarAlumno($Alumno)
     {
+        $id = $Alumno->getId();
+        $con = $this->crearConexion();
+        $sql1 = "DELETE FROM alumno WHERE id=?";
+        $consultaPreparada = $con->prepare($sql1);
+        $consultaPreparada->bind_param("i", $id);
+        $consultaPreparada->execute();
+        $con->close();
     }
 }

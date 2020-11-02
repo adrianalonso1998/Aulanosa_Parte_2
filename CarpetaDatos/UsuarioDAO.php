@@ -2,8 +2,8 @@
 include_once "../carpetaModelo/Usuario.php";
 // $login = "admin";
 // $password = "1234";
-// $usu=new Usuario(9,"prueba2","qqqqqq",2);
-// $usuDAO=new UsuarioDAO();
+//$usu=new Usuario(12,"ElPepe","EteSetch",1);
+//$usuDAO=new UsuarioDAO();
 // $usu=$usuDAO->obtenerUsuario($login, $password);
 // var_dump($usu);
 //$usuDAO->guardarUsuario($usu);
@@ -32,8 +32,13 @@ class UsuarioDAO
         $resultado = $consultaPreparada->get_result();
         $filas = $resultado->fetch_array();
         $con1->close();
-        $usuario = new Usuario($filas[0], $filas[1], $filas[2], $filas[3]);
-        return $usuario; //
+        if ($filas != null) {
+            $usuario = new Usuario($filas[0], $filas[1], $filas[2], $filas[3]);
+            return $usuario;
+        }
+        else{
+            return false;
+        }
     }
     function guardarUsuario($Usuario)
     {
@@ -75,5 +80,6 @@ class UsuarioDAO
         $consultaPreparada = $con->prepare($sql1);
         $consultaPreparada->bind_param("i", $id);
         $consultaPreparada->execute();
+        $con->close();
     }
 }
