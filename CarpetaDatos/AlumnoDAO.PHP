@@ -34,7 +34,7 @@ class AlumnoDAO
         $sql = "SELECT * FROM alumno INNER JOIN usuario ON alumno.id=usuario.alumno_id WHERE usuario.id=?;";
         $consultaPreparada = $con1->prepare($sql);
         $consultaPreparada->bind_param("i", $id);
-        $consultaPreparada->execute();
+        $consultaPreparada->execute();/**/
         $resultado = $consultaPreparada->get_result();
         $filas = $resultado->fetch_array();
         $con1->close();
