@@ -35,28 +35,48 @@ class UsuarioDAO
         if ($filas != null) {
             $usuario = new Usuario($filas[0], $filas[1], $filas[2], $filas[3]);
             return $usuario;
-        }
-        else{
+        } else {
             return false;
         }
     }
-    function guardarUsuario($Usuario)
+    function obtenerComprobacionUsuario($login)///////comprobar si ya exixte el login
     {
+        $con1 = $this->crearConexion();
+        $sql = "SELECT id,login,password,alumno_id FROM usuario WHERE login=?;";
+        $consultaPreparada = $con1->prepare($sql);
+        $consultaPreparada->bind_param("s", $login);
+        $consultaPreparada->execute();
+        $resultado = $consultaPreparada->get_result();
+        $filas = $resultado->fetch_array();
+        $con1->close();
+        if ($filas != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function guardarUsuario($Usuario, $con = null)
+    {
+        $cerrarConexion = false;
+        if ($con == null) {
+            $con = $this->crearConexion();
+            $cerrarConexion = true;
+        }
         $id = $Usuario->getId();
         //insertar en base de datos, se le pasa un objeto y si no tene id es o por lo cual entra y lo registra
         if ($id === 0) {
             $login = $Usuario->getLogin();
             $password = $Usuario->getPassword();
             $alumno_id = $Usuario->getAlumno_id(); //:D
-            $con = $this->crearConexion();
             $sql1 = "INSERT INTO usuario (login, password, alumno_id) Values (?,?,?)";
             $consultaPreparada = $con->prepare($sql1);
             $consultaPreparada->bind_param("ssi", $login, $password, $alumno_id);
             $consultaPreparada->execute();
             $id = $con->insert_id;
             $Usuario->setId($id);
-            var_dump($id);
-            $con->close();
+            if ($cerrarConexion == true) {
+                $con->close();
+            }
         }
         //si ya esta creado lo actualiza
         else {
@@ -64,12 +84,13 @@ class UsuarioDAO
             $login = $Usuario->getLogin();
             $password = $Usuario->getPassword();
             $alumno_id = $Usuario->getAlumno_id(); //:D
-            $con = $this->crearConexion();
             $sql1 = "UPDATE usuario set login=?, password=? WHERE id=?";
             $consultaPreparada = $con->prepare($sql1);
             $consultaPreparada->bind_param("ssi", $login, $password, $id);
             $consultaPreparada->execute();
-            $con->close();
+            if ($cerrarConexion == true) {
+                $con->close();
+            }
         }
     }
     function eliminarUsuario($Usuario)

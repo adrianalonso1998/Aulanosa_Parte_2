@@ -10,24 +10,25 @@
 
 <body>
     <?php
+
     session_start();
     if (isset($_SESSION['sesion'])) {
         header("Location: datosAlumno.php");
     }
-    $cont1=1;
+    $cont1 = 1;
     if (!isset($_COOKIE["contador"])) {
-        setcookie("contador", $cont1,time() + 10);
+        setcookie("contador", $cont1, time() + 10);
+    } else {
+        $cont1 = $_COOKIE["contador"];
     }
-    else {
-        $cont1=$_COOKIE["contador"];
-    }
-    if($cont1==4){
+    if ($cont1 == 4) {
         echo "demasiados intentos....espere";
-    }
-    
-    else{
-        echo $cont1."<br>";
-        echo'
+    } else {
+        echo $cont1 . "<br>";
+        echo '<h1>Datos de login</h1>
+        <a href="FormularioAltaAlumno.php">Entra para registrase</a>
+        </br>
+        </br>
     <form action="autenticar.php" method="POST" enctype="multipart/form-data">
         <label for="text">Correo Electrónico</label>
         <input type="text" name="correo" id="correo" placeholder="Pon aquí el correo Electrónico" required><br>
@@ -35,7 +36,10 @@
         <input type="password" name="password" id="password" placeholder="Pon aquí la Contraseña" required><br>
         <input type="submit"><br>
     </form>';
-    }?>
+    }
+    if (isset($_GET['loginCorrecto'])) {
+        echo '<script>alert("Usuario o contraseña erroreos")</script>';
+    } ?>
 </body>
 
 </html>

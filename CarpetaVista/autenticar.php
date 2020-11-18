@@ -27,5 +27,5 @@ if ($res != false) {
     }
 
 
-     header('Location: errorAutenticacion.php');
+     header('Location: login.php?loginCorrecto=false');
     }
