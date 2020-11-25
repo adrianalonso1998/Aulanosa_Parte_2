@@ -7,12 +7,13 @@
     <title>Document</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
     <style>
-        h1 {
-            text-align: center;
-        }
-
         .login {
             margin: 4%;
+        }
+
+        .contenedor {
+            text-align: center;
+            margin-top: 5%;
         }
     </style>
 </head>
@@ -21,6 +22,7 @@
     <body>
         <ul class="nav nav-tabs nav-justified">
             <?php
+            include_once "../CarpetaModelo/ServicioAlumnos.php";
             include_once "../CarpetaModelo/Usuario.php";
             include_once "../CarpetaModelo/Alumno.php";
             /*añadir los datos del alumno*/
@@ -35,18 +37,6 @@
             <li class="pl-5"><a href="ListadoAlumnos.php">Listado De Alumnos </a></li>
             <li class="pl-5"><a href="datosAlumno.php">Datos Alumno </a></li>;
         </ul>
-        <h1>Bienvenido de Nuevo</h1>
-        <!-- Login:<?php// echo $_GET['login']; ?>
-        <br>
-        Contraseña:<?php //echo $_GET['contraseña']; 
-                    ?>
-        <br>
-        nombre:<?php //echo $_GET['nombre1']; 
-                ?>
-        <br>
-        apellidos:<?php //echo $_GET['apellidos1']; 
-                    ?>
-        <br> -->
         <?php
 
         //la alerta salga con un delay para no ver la págin en blanco mientras esta el alert
@@ -55,31 +45,37 @@
         }
         /*añadir los datos del alumno*/
         $autenticacion = new Autenticacion();
-
-        if (isset($_SESSION['sesion'])) {
-            $usuario1 = $_SESSION['sesion'];
-            /*añadir los datos del alumno*/
-            $alumno1 = $autenticacion->obtenerAlumno($usuario1);
+        if (isset($_GET['id'])) {
+            $id = $_GET['id'];
+            $servAlu = new ServicioAlumnos;
+            $datosAlumnoListado = $servAlu->obtenerAlumnoPorId($id);
+        } else {
+            echo "Error 404";
         }
-        elseif (isset($_SESSION['datosUsuario'])) {
-            $usuario1 = $_SESSION['datosUsuario'];
-            /*añadir los datos del alumno*/
-            $alumno1 = $_SESSION['datosAlumno'];
+        if (isset($_GET['update'])) {
+            echo '<script>window.setTimeout(function(){ alert("Update de los datos exitoso");},500);</script>';
         }
 
-        if ($alumno1 != false) {
-            echo "login: ";
-            echo $usuario1->getLogin();
-            echo "<br>";
-            echo "Contraseña: ";
-            echo $usuario1->getPassword();
-            echo "<br>";
-            echo "nombre: ";
-            echo $alumno1->getNombre();
-            echo "<br>";
-            echo "apellidos: ";
-            echo $alumno1->getApellidos();
-            echo "<br>";
+        if ($datosAlumnoListado != false) {
+            $nom = $datosAlumnoListado->getNombre();
+            $apell = $datosAlumnoListado->getApellidos();
+            $fecha = $datosAlumnoListado->getFecha_nacimiento();
+            $id2 = $datosAlumnoListado->getId();
+            echo '<div class="contenedor">
+        <h1>Formulario Update Alumno</h1>
+        </br>
+        <a href="login.php">Login</a>
+    <form action="../CarpetaModelo/AltaAlumno.php" method="POST" enctype="multipart/form-data">
+        <h2>Datos Alumno</h2>
+        <label for="text">Nombre</label>
+        <input type="text" value="' . $nom . '" name="nombre" id="nombre" placeholder="Pon aquí tu nombre" required><br>
+        <label for="text">Apellidos</label>
+        <input type="text" value="' . $apell . '" name="apellidos" id="apellidos" placeholder="Pon aquí tus Apellidos" required><br>
+        <label for="text">Fecha nacimineto</label>
+        <input type="date" value="' . $fecha . '" name="fecha" id="fecha" placeholder="Pon aquí Tu Fecha de nacimiento" required><br>
+        <input type="hidden" value="' . $id2 . '" name="id" id="id"><br>
+        <input type="submit"><br>
+    </form>';
         } else {
             echo "No se pudieron recuperar los datos del alumno";
         }
@@ -87,9 +83,6 @@
         ?>
         <form action="deslogar.php" method="POST">
             <input type="submit" value="Cerrar Sesión">
-        </form>
-        <form action="ListadoAlumnos.php" method="POST">
-            <input type="submit" value="Listado Alumnos">
         </form>
 
 </div>

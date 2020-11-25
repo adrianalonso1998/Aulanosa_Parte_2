@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adrián alonso tabla</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
     <style>
         table {
             border: solid green 5%;
@@ -35,29 +36,43 @@
         }
 
         div {
-            margin: 20% 20% 10% 20%;
+            margin: 3% 15%;
         }
     </style>
 </head>
 
 <body>
+<?php session_start(); ?>
+    <ul class="nav nav-tabs nav-justified">
+        <?php
+        if (!isset($_SESSION['sesion']) && !isset($_SESSION['datosUsuario'])) {
+            echo '<li class="pl-5"><a href="login.php">login </a></li>';
+        }
+        ?>
+        <li class="pl-5"><a href="FormularioAltaAlumno.php">Formulario De Alta </a></li>
+        <?php
+        if (isset($_SESSION['sesion']) || isset($_SESSION['datosUsuario'])) {
+            echo '<li class="pl-5"><a href="datosAlumno.php">Datos Alumno  </a></li>';
+            echo '<li class="pl-5"><a href="ListadoAlumnos.php">Listado De Alumnos  </a></li>';
+        }
+        ?>
+    </ul>
+
     <div>
         <table>
+        
             <?php
-            //terminar tabla get en todos los campos y poner th
             include_once "../CarpetaModelo/ServicioAlumnos.php";
-            if(isset ($_GET['registro'])){
-                echo '<script>alert("Gracias por registrarte")</script>';
-            }
             $serv = new ServicioAlumnos();
             $listado = $serv->obtenerListadoAlumnos();
            // var_dump($listado);
-            echo "<tr><th>Nombre</th><th>Apellidos</th><th>Fecha Nacimiento</th></tr>";
+            echo "<tr><th class='text-center'>Nombre</th><th class='text-center'>Apellidos</th><th class='text-center'>Fecha Nacimiento</th></tr>";
             foreach ($listado as $alumno) :
             ?>
                 <tr>
                     <?php
-                    echo "<td>" . $alumno->getNombre() . "</td>";
+                    $nuevoId=$alumno->getId();
+                    echo "<td>" . "<a href='datosAlumnoListado.php?id=$nuevoId'>".$alumno->getNombre().'</a>' . "</td>";
                     ?>
                     <?php
                     echo "<td>" . $alumno->getApellidos() . "</td>";
@@ -71,7 +86,9 @@
             ?>
         </table>
     </div>
-
+    <form action="deslogar.php" method="POST">
+            <input type="submit" value="Cerrar Sesión">
+        </form>
 </body>
 
 </html>

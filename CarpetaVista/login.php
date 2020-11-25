@@ -5,14 +5,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
 
 </head>
 
+
+
 <body>
+    <?php session_start(); ?>
+    <ul class="nav nav-tabs nav-justified">
+        <?php
+        if (!isset($_SESSION['sesion']) && !isset($_SESSION['datosUsuario'])) {
+            echo '<li class="pl-5"><a href="login.php">login </a></li>';
+        }
+        ?>
+        <li class="pl-5"><a href="FormularioAltaAlumno.php">Formulario De Alta </a></li>
+        <?php
+        if (isset($_SESSION['sesion']) || isset($_SESSION['datosUsuario'])) {
+            echo '<li class="pl-5"><a href="datosAlumno.php">Datos Alumno  </a></li>';
+            echo '<li class="pl-5"><a href="ListadoAlumnos.php">Listado De Alumnos  </a></li>';
+        }
+        ?>
+    </ul>
+
     <?php
 
-    session_start();
-    if (isset($_SESSION['sesion'])) {
+    if (isset($_SESSION['sesion']) || isset($_SESSION['datosAlumno'])) {
         header("Location: datosAlumno.php");
     }
     $cont1 = 1;
@@ -37,8 +55,9 @@
         <input type="submit"><br>
     </form>';
     }
+    //la alerta salga con un delay para no ver la págin en blanco mientras esta el alert
     if (isset($_GET['loginCorrecto'])) {
-        echo '<script>alert("Usuario o contraseña erroreos")</script>';
+        echo '<script>window.setTimeout(function(){ alert("Usuario o contraseña erroreos");},500);</script>';
     } ?>
 </body>
 
