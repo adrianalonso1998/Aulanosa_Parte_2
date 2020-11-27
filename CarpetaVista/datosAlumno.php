@@ -88,9 +88,10 @@
         <form action="deslogar.php" method="POST">
             <input type="submit" value="Cerrar Sesión">
         </form>
-        <form action="ListadoAlumnos.php" method="POST">
+        
+        <!-- <form action="ListadoAlumnos.php" method="POST">
             <input type="submit" value="Listado Alumnos">
-        </form>
+        </form> -->
 
 </div>
 </body>

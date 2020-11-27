@@ -42,7 +42,7 @@
 </head>
 
 <body>
-<?php session_start(); ?>
+    <?php session_start(); ?>
     <ul class="nav nav-tabs nav-justified">
         <?php
         if (!isset($_SESSION['sesion']) && !isset($_SESSION['datosUsuario'])) {
@@ -56,23 +56,24 @@
             echo '<li class="pl-5"><a href="ListadoAlumnos.php">Listado De Alumnos  </a></li>';
         }
         ?>
+        <li class="pl-5"><a href="../CarpetaModelo/generadorXml.php">Descargar Xml</a></li>
     </ul>
 
     <div>
         <table>
-        
+
             <?php
             include_once "../CarpetaModelo/ServicioAlumnos.php";
             $serv = new ServicioAlumnos();
             $listado = $serv->obtenerListadoAlumnos();
-           // var_dump($listado);
+            // var_dump($listado);
             echo "<tr><th class='text-center'>Nombre</th><th class='text-center'>Apellidos</th><th class='text-center'>Fecha Nacimiento</th></tr>";
             foreach ($listado as $alumno) :
             ?>
                 <tr>
                     <?php
-                    $nuevoId=$alumno->getId();
-                    echo "<td>" . "<a href='datosAlumnoListado.php?id=$nuevoId'>".$alumno->getNombre().'</a>' . "</td>";
+                    $nuevoId = $alumno->getId();
+                    echo "<td>" . "<a href='datosAlumnoListado.php?id=$nuevoId'>" . $alumno->getNombre() . '</a>' . "</td>";
                     ?>
                     <?php
                     echo "<td>" . $alumno->getApellidos() . "</td>";
@@ -86,9 +87,13 @@
             ?>
         </table>
     </div>
-    <form action="deslogar.php" method="POST">
-            <input type="submit" value="Cerrar Sesión">
-        </form>
+    <div class="container">
+        <div class="row justify-content-center">
+            <form action="deslogar.php" method="POST">
+                <input type="submit" value="Cerrar Sesión" >
+        </div>
+    </div>
+    </form>
 </body>
 
 </html>
