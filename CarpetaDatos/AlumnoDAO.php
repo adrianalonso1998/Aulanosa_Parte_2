@@ -4,7 +4,7 @@ include_once "../carpetaModelo/Alumno.php";
 include_once "../CarpetaDatos/UsuarioDAO.php";
 //$usuDAO = new UsuarioDAO();
 // $fecha = new DateTime('2001-08-17');
-// $alumno1 = new Alumno(14, "Vanessa", "Señé", $fecha);
+// $alumno1 = new Alumno(14, "Gustavo", "Señé", $fecha);
 // $usu = $usuDAO->obtenerUsuario("admin", "1234");
 // $alumDAO = new AlumnoDAO();
 // $alu = $alumDAO->obtenerAlumno($usu);
@@ -91,7 +91,7 @@ class AlumnoDAO
         } catch (Exception $e) {
             return false;
         }
-        return ;
+        return;
     }
     function eliminarAlumno($Alumno)
     {
@@ -135,22 +135,53 @@ class AlumnoDAO
         return true;
     }
 
-    function obtenerListadoAlumnosDAO()
+    function obtenerListadoAlumnosDAO($select = null, $ordenar = null)
     {
         $con1 = $this->crearConexion();
-        $sql = "SELECT * FROM alumno;";
         $resultado = true;
         $listaAlumnos = array();
 
-        $resultado = $con1->query($sql);
+        if ($select == null || $ordenar == null) {
+            $sql = "SELECT * FROM alumno;";
+            $resultado = $con1->query($sql);
+            foreach ($resultado as $fila) {
+                //construirte un objeto de tipo Alumno
+                $al = new Alumno($fila['id'], $fila['nombre'], $fila['apellidos'], $fila['fecha_nacimiento']);
+                //Añadir el objeto a $listaAlumnos
+                $listaAlumnos[] = $al;
+            }
+        } else {
+            if ($select == "comienzaPor") {
+                $sql = "SELECT * FROM alumno where apellidos like ?;";
+                $ordenar = "$ordenar%";
+            }
+            if ($select == "terminaPor") {
+                $sql = "SELECT * FROM alumno where apellidos like ?;";
+                $ordenar = "%$ordenar";
+            }
+            if ($select == "esIgual") {
+                $sql = "SELECT * FROM alumno where apellidos like ?;";
+            }
+            if ($select == "menorIgual") {
+                $sql = "SELECT * FROM alumno where apellidos <= ? ORDER BY apellidos;";
+            }
+            if ($select == "mayorIgual") {
+                $sql = "SELECT * FROM alumno where apellidos >= ? ORDER BY apellidos;";
+            }if ($select == "sinFiltro") {
+                $sql = "SELECT * FROM alumno where 1=1 or ?='aasasd'";
+            }
+            //bind_param
+            $consultaPreparada = $con1->prepare($sql);
+            $consultaPreparada->bind_param("s", $ordenar);
+            $consultaPreparada->execute();
 
-        foreach ($resultado as $fila) {
-            //construirte un objeto de tipo Alumno
-            $al = new Alumno($fila['id'], $fila['nombre'], $fila['apellidos'], $fila['fecha_nacimiento']);
-            //Añadir el objeto a $listaAlumnos
-            $listaAlumnos[] = $al;
+            $resultado = $consultaPreparada->get_result();
+            while (($fila  = $resultado->fetch_array()) != null) {
+                $al = new Alumno($fila['id'], $fila['nombre'], $fila['apellidos'], $fila['fecha_nacimiento']);
+                //Añadir el objeto a $listaAlumnos
+                $listaAlumnos[] = $al;
+            }
         }
-
         $con1->close();
         return $listaAlumnos;
     }

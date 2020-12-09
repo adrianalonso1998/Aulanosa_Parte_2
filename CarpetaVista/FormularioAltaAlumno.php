@@ -48,7 +48,6 @@
         echo '<div class="contenedor">
         <h1>Formulario de Registro</h1>
         </br>
-        <a href="login.php">Login</a>
     <form action="../CarpetaModelo/AltaAlumno.php" method="POST" enctype="multipart/form-data">
         <h2>Datos Usuario</h2>
         <label for="text">Correo Electrónico</label>

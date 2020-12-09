@@ -1,5 +1,4 @@
 <?php
-
 include_once "ServicioAlumnos.php";
 $serv = new ServicioAlumnos();
 $listado = $serv->obtenerListadoAlumnos();

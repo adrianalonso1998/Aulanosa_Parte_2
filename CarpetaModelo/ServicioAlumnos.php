@@ -3,12 +3,11 @@
 include_once "../CarpetaDatos/AlumnoDAO.php";
 class ServicioAlumnos
 {
-    //esto es copiado cambiar
-
-    function obtenerListadoAlumnos()
+    
+    function obtenerListadoAlumnos($select=null,$ordenar=null)
     {
         $aluDAO3 = new AlumnoDAO();
-        $listaAlumnos = $aluDAO3->obtenerListadoAlumnosDAO();
+        $listaAlumnos = $aluDAO3->obtenerListadoAlumnosDAO($select,$ordenar);
         return $listaAlumnos;
     }
     function obtenerAlumnoPorId($id)

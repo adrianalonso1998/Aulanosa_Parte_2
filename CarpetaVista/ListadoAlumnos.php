@@ -17,6 +17,7 @@
             border: rgb(96, 145, 18) 1px solid;
             padding: 5%;
             font-size: x-large;
+            min-width: 150px;
         }
 
         td {
@@ -65,8 +66,26 @@
             <?php
             include_once "../CarpetaModelo/ServicioAlumnos.php";
             $serv = new ServicioAlumnos();
+
             $listado = $serv->obtenerListadoAlumnos();
-            // var_dump($listado);
+
+            
+            if (isset($_GET['select'])) {
+                //$_GET['select'], $_GET['ordenar'] recogidos del form enviado a si mismo
+                $listado = $serv->obtenerListadoAlumnos($_GET['select'], $_GET['ordenar']);
+            }
+            echo '<form action=' . $_SERVER['PHP_SELF'] . ' method="GET" enctype="multipart/form-data">
+            <select name="select">
+                <option value="comienzaPor">comienzaPor</option>
+                <option value="terminaPor" >terminaPor</option>
+                <option value="esIgual">esIgual</option>
+                <option value="sinFiltro" selected>sinFiltro</option>
+                <option value="menorIgual">menorIgual</option>
+                <option value="mayorIgual">mayorIgual</option>
+            </select>
+            <input type="text" name="ordenar" id="ordenar" placeholder="Pon aquí tu filtro" required>
+            <input type="submit">
+        </form>';
             echo "<tr><th class='text-center'>Nombre</th><th class='text-center'>Apellidos</th><th class='text-center'>Fecha Nacimiento</th></tr>";
             foreach ($listado as $alumno) :
             ?>
@@ -90,7 +109,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <form action="deslogar.php" method="POST">
-                <input type="submit" value="Cerrar Sesión" >
+                <input type="submit" value="Cerrar Sesión">
         </div>
     </div>
     </form>
